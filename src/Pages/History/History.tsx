@@ -1,5 +1,5 @@
-import React from "react";
-import { HistoryContainer, HistoryList, Status } from "./styles";
+import React from 'react'
+import { HistoryContainer, HistoryList, Status } from './styles'
 
 export const History = () => {
   return (
@@ -67,5 +67,5 @@ export const History = () => {
         </table>
       </HistoryList>
     </HistoryContainer>
-  );
-};
+  )
+}

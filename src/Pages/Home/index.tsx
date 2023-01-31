@@ -1,6 +1,5 @@
-import { Play } from "phosphor-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Play } from 'phosphor-react'
+import { useForm } from 'react-hook-form'
 import {
   CountdownContainer,
   FormContainer,
@@ -9,28 +8,30 @@ import {
   Separator,
   StartCountButton,
   TaskInput,
-} from "./styles";
+} from './styles'
 
 // controlled //uncontrolled
 
 export const Home = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { erros },
-  } = useForm();
-  const [task, setTask] = useState("");
+  const { register, handleSubmit, watch } = useForm()
+
+  const handleCreateNewCircle = (data: any) => {
+    console.log(data)
+  }
+
+  const task = watch('task')
 
   return (
     <>
       <HomeContainer>
-        <form action="" onSubmit={handleSubmit}>
+        <form action="" onSubmit={handleSubmit(handleCreateNewCircle)}>
           <FormContainer>
             <label htmlFor="task">I Will Work in</label>
             <TaskInput
               id="task"
               list="task-suggestion"
               placeholder="Give a name for your project"
+              {...register('task')}
             />
             <datalist id="task-suggestion">
               <option value="Study" />
@@ -46,6 +47,7 @@ export const Home = () => {
               max={90}
               min={5}
               placeholder="+00-"
+              {...register('minutesAmount', { valueAsNumber: true })}
             />
             <span>Minutes.</span>
           </FormContainer>
@@ -62,5 +64,5 @@ export const Home = () => {
         </form>
       </HomeContainer>
     </>
-  );
-};
+  )
+}
