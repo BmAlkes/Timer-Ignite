@@ -11,10 +11,11 @@ import {
   StartCountButton,
   TaskInput,
 } from './styles'
+import { useState } from 'react'
 
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, 'Inform task'),
-  minutes: zod.number().min(5).max(90),
+  minutesAmount: zod.number().min(5).max(90),
 })
 
 interface NewCyleFormData {
@@ -22,25 +23,55 @@ interface NewCyleFormData {
   minutesAmount: number
 }
 
+interface CyCleProps {
+  id: string
+  task: string
+  minutesAmount: number
+}
+
 export const Home = () => {
-  const { register, handleSubmit, watch } = useForm<NewCyleFormData>({
+  const [cycle, setCycle] = useState<CyCleProps[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
+
+  const { register, watch, handleSubmit, reset } = useForm<NewCyleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
-      task: '',
+      task: ' ',
       minutesAmount: 0,
     },
   })
 
-  const handleCreateNewCircle = (data: NewCyleFormData) => {
-    console.log(data)
+  const handleCreateNewCycle = (data: NewCyleFormData) => {
+    const id = String(new Date().getTime())
+    const newCycle: CyCleProps = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+    }
+
+    setCycle((state) => [...state, newCycle])
+    setActiveCycleId(id)
+    reset()
   }
 
+  const activeCycle = cycle.find((cycle) => cycle.id === activeCycleId)
+
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
+
+  const minutesAmount = Math.floor(currentSeconds / 60)
+  const secondsAmount = Math.floor(currentSeconds % 60)
+
+  const minutes = String(minutesAmount).padStart(2, '0')
+  const seconds = String(secondsAmount).padStart(2, '0')
+  console.log(cycle)
   const task = watch('task')
 
   return (
     <>
       <HomeContainer>
-        <form action="" onSubmit={handleSubmit(handleCreateNewCircle)}>
+        <form onSubmit={handleSubmit(handleCreateNewCycle)}>
           <FormContainer>
             <label htmlFor="task">I Will Work in</label>
             <TaskInput
@@ -67,13 +98,13 @@ export const Home = () => {
             <span>Minutes.</span>
           </FormContainer>
           <CountdownContainer>
-            <span>0</span>
-            <span>0</span>
+            <span>{minutes[0]}</span>
+            <span>{minutes[1]}</span>
             <Separator>:</Separator>
-            <span>0</span>
-            <span>0</span>
+            <span>{seconds[0]}</span>
+            <span>{seconds[1]}</span>
           </CountdownContainer>
-          <StartCountButton type="submit" disabled={!task}>
+          <StartCountButton disabled={!task}>
             <Play size={24} /> Play
           </StartCountButton>
         </form>
