@@ -33,14 +33,19 @@ export const Home = () => {
     },
   })
 
-  const { register, handleSubmit, watch } = newCycleForm
+  const { register, handleSubmit, watch, reset } = newCycleForm
+
+  function handleCreateNewCyle(data: NewCyleFormData) {
+    createNewCycle(data)
+    reset()
+  }
 
   const task = watch('task')
 
   return (
     <>
       <HomeContainer>
-        <form onSubmit={handleSubmit(createNewCycle)}>
+        <form onSubmit={handleSubmit(handleCreateNewCyle)}>
           <NewCycleForm register={register} />
           <CountDown />
           {activeCycle ? (
